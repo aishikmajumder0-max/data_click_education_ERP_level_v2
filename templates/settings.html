@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block page_title %}Settings{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Admin Settings</h1><p>Configure your management system</p></div></div>
+<div class="dashboard-grid">
+<section class="card form-card"><div class="section-title">🏫 <span>Institution Details</span></div><div class="form-grid two"><label>Institution Name<input value="Data Click Education"></label><label>Academic Session<input value="2027-28"></label><label>Phone<input value="7310095239"></label><label>Email<input value="admin@example.com"></label><label class="full">Address<textarea>West Bengal, India</textarea></label></div><button class="btn primary">Save Settings</button></section>
+<section class="card"><div class="section-title">⚙ <span>System Information</span></div><div class="info-list"><div><span>Backend</span><b>Python / Flask</b></div><div><span>Data Engine</span><b>Pandas + CSV</b></div><div><span>Frontend</span><b>HTML + CSS + JavaScript</b></div><div><span>Environment</span><b>Local Development</b></div></div></section>
+</div>
+{% endblock %}

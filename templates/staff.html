@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Staff Management{% endblock %}
+{% block page_title %}Staff Management{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Staff Management</h1><p>Manage teachers and employees</p></div><button class="btn primary" onclick="openModal()">＋ Add Staff</button></div>
+<section class="card"><div class="table-wrap"><table><thead><tr><th>STAFF ID</th><th>NAME</th><th>ROLE</th><th>MOBILE</th><th>EMAIL</th><th>JOINING</th><th>STATUS</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><h2>Add Staff</h2><button onclick="closeModal()">×</button></div><form id="staffForm" class="form-grid two">
+<label>Name<input name="name" required></label><label>Role<select name="role"><option>Teacher</option><option>Principal</option><option>Accountant</option><option>Admin</option><option>Support Staff</option></select></label>
+<label>Mobile<input name="mobile"></label><label>Email<input name="email" type="email"></label><label>Joining Date<input name="joining_date" type="date"></label><label>Salary<input name="salary" type="number"></label>
+<button class="btn primary">Save Staff</button></form></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function load(){const d=await api('/api/staff');document.getElementById('rows').innerHTML=d.length?d.reverse().map(x=>`<tr><td>${esc(x.staff_id)}</td><td><b>${esc(x.name)}</b></td><td>${esc(x.role)}</td><td>${esc(x.mobile)}</td><td>${esc(x.email)}</td><td>${esc(x.joining_date)}</td><td><span class="badge success">${esc(x.status)}</span></td></tr>`).join(''):'<tr><td colspan="7" class="empty">No staff records.</td></tr>'}
+function openModal(){document.getElementById('modal').classList.add('show')}function closeModal(){document.getElementById('modal').classList.remove('show')}
+document.getElementById('staffForm').addEventListener('submit',async e=>{e.preventDefault();await fetch('/api/staff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});closeModal();e.target.reset();load()});load();
+</script>
+{% endblock %}

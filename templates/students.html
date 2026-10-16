@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}All Students{% endblock %}
+{% block page_title %}All Students{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>All Students</h1><p>Manage registered students</p></div><a class="btn primary" href="/new-admission">＋ New Admission</a></div>
+<section class="card">
+  <div class="toolbar"><input id="search" class="search" placeholder="🔍 Search by name, ADM no, mobile or class..."><button class="btn light" onclick="loadStudents()">↻ Refresh</button></div>
+  <div class="table-wrap"><table><thead><tr><th>ADM NO</th><th>STUDENT</th><th>PARENT</th><th>CLASS</th><th>MOBILE</th><th>STATUS</th><th>ACTION</th></tr></thead><tbody id="studentRows"></tbody></table></div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+let students=[];
+async function loadStudents(){students=await api('/api/students');render();}
+function render(){
+ const q=document.getElementById('search').value.toLowerCase();
+ const arr=students.filter(s=>Object.values(s).join(' ').toLowerCase().includes(q));
+ document.getElementById('studentRows').innerHTML=arr.length?arr.map(s=>`<tr>
+ <td><b>${esc(s.adm_no)}</b></td><td><b>${esc(s.full_name)}</b><small>${esc(s.email)}</small></td>
+ <td>${esc(s.father_name)}</td><td>${esc(s.class_name)} ${s.section?'- '+esc(s.section):''}</td><td>${esc(s.mobile)}</td>
+ <td><span class="badge ${s.status==='Active'?'success':'warning'}">${esc(s.status)}</span></td>
+ <td><a class="icon-btn" href="/students/edit/${s.id}">✏️</a><a class="icon-btn" target="_blank" href="/id-card/${encodeURIComponent(s.adm_no)}.pdf">🪪</a><button class="icon-btn danger" onclick="removeStudent('${s.id}')">🗑</button></td></tr>`).join(''):
+ '<tr><td colspan="7" class="empty">No students found.</td></tr>';
+}
+async function removeStudent(id){if(!confirm('Delete this student?'))return;await fetch('/api/students/'+id,{method:'DELETE'});loadStudents();}
+document.getElementById('search').addEventListener('input',render);loadStudents();
+</script>
+{% endblock %}

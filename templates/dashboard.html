@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Data Click Education{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Dashboard</h1><p>Welcome back, Super Administrator</p></div>
+  <a class="btn primary" href="/new-admission">＋ New Admission</a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="stat-icon blue">♟</div><div><span>Total Students</span><strong id="totalStudents">0</strong></div></div>
+  <div class="stat-card"><div class="stat-icon green">✓</div><div><span>Active Students</span><strong id="activeStudents">0</strong></div></div>
+  <div class="stat-card"><div class="stat-icon orange">₹</div><div><span>Fee Collection</span><strong id="feeTotal">₹0</strong></div></div>
+  <div class="stat-card"><div class="stat-icon purple">▣</div><div><span>New Enquiries</span><strong id="enquiries">0</strong></div></div>
+</div>
+
+<div class="dashboard-grid">
+  <section class="card">
+    <div class="card-head"><h3>Recent Admissions</h3><a href="/students">View All</a></div>
+    <div class="table-wrap"><table><thead><tr><th>ADM NO</th><th>Student</th><th>Class</th><th>Status</th></tr></thead>
+    <tbody id="recentStudents"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody></table></div>
+  </section>
+  <section class="card">
+    <div class="card-head"><h3>Quick Actions</h3></div>
+    <div class="quick-actions">
+      <a href="/new-admission">♟ <span>New Admission</span></a>
+      <a href="/enquiries">▣ <span>Admission Enquiry</span></a>
+      <a href="/fees">₹ <span>Collect Fee</span></a>
+      <a href="/attendance">☑ <span>Mark Attendance</span></a>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadDashboard(){
+  const d = await api('/api/dashboard');
+  document.getElementById('totalStudents').textContent=d.students;
+  document.getElementById('activeStudents').textContent=d.active_students;
+  document.getElementById('feeTotal').textContent='₹'+Number(d.fee_total).toLocaleString('en-IN');
+  document.getElementById('enquiries').textContent=d.enquiries;
+  document.getElementById('recentStudents').innerHTML=d.recent_students.length ? d.recent_students.map(s=>`
+    <tr><td>${esc(s.adm_no)}</td><td><b>${esc(s.full_name)}</b><small>${esc(s.mobile)}</small></td>
+    <td>${esc(s.class_name)} ${s.section ? '- '+esc(s.section):''}</td>
+    <td><span class="badge success">${esc(s.status)}</span></td></tr>`).join('') :
+    '<tr><td colspan="4" class="empty">No admissions yet. Add your first student.</td></tr>';
+}
+loadDashboard();
+</script>
+{% endblock %}

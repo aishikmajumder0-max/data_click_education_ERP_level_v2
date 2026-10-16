@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}New Admission{% endblock %}
+{% block page_title %}New Admission{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>New Admission</h1><p>Register a new student</p></div>
+  <a class="btn light" href="/students">← Back to Students</a>
+</div>
+
+<form id="admissionForm" enctype="multipart/form-data"><input type="hidden" name="id" id="studentId"><input type="hidden" name="existing_photo" id="existingPhoto">
+<section class="card form-card">
+  <div class="section-title">▣ <span>Basic Information</span></div>
+  <div class="form-grid two">
+    <label>ADM NO <b>*</b><input name="adm_no" placeholder="ADM-26-1022" required></label>
+    <label>ADMISSION FORM NO <em>(OPTIONAL — FROM ENQUIRY)</em><input name="form_no" placeholder="e.g. FORM-26-1001"></label>
+    <label class="full">FULL NAME <b>*</b><input name="full_name" placeholder="Student full name" required></label>
+    <label>FATHER'S NAME<input name="father_name" placeholder="Father's name"></label>
+    <label>MOTHER'S NAME<input name="mother_name" placeholder="Mother's name"></label>
+    <label>DATE OF BIRTH<input type="date" name="dob"></label>
+    <label>GENDER<select name="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></label>
+    <label>BLOOD GROUP<select name="blood_group"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></label>
+    <label>AADHAAR NO<input name="aadhaar_no" maxlength="12" placeholder="12-digit number"></label>
+    <label>PEN NO <em>(OPTIONAL)</em><input name="pen_no" placeholder="Permanent Education Number"></label>
+  </div>
+</section>
+
+<section class="card form-card">
+  <div class="section-title">🎓 <span>Class & Admission</span></div>
+  <div class="form-grid four">
+    <label>CLASS <b>*</b><select name="class_name" required><option value="">Select Class</option><option>Nursery</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>BCA</option><option>B.Tech</option></select></label>
+    <label>SECTION<select name="section"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></label>
+    <label>STATUS<select name="status"><option>Active</option><option>Inactive</option><option>Passed Out</option></select></label>
+    <label>NATIONALITY<select name="nationality"><option>Indian</option><option>Other</option></select></label>
+    <label>ADMISSION DATE<input type="date" name="admission_date"></label>
+    <label>CATEGORY<select name="category"><option value="">Select</option><option>General</option><option>OBC</option><option>SC</option><option>ST</option><option>EWS</option></select></label>
+    <label>RELIGION<select name="religion"><option value="">Select</option><option>Hindu</option><option>Muslim</option><option>Christian</option><option>Other</option></select></label>
+  </div>
+</section>
+
+<section class="card form-card">
+  <div class="section-title">☎ <span>Contact Details</span></div>
+  <div class="form-grid three">
+    <label>MOBILE NO<input name="mobile" placeholder="+91 XXXXX XXXXX"></label>
+    <label>ALT MOBILE NO (FOR ID CARD)<input name="alt_mobile" placeholder="Alternate number"></label>
+    <label>EMAIL<input type="email" name="email" placeholder="email@example.com"></label>
+    <label class="two-span">ADDRESS<textarea name="address" placeholder="Full residential address"></textarea></label>
+    <label>PIN CODE<input name="pin_code" placeholder="e.g. 284001"></label>
+    <label>DISTRICT<input name="district" placeholder="e.g. Nadia"></label>
+    <label>STATE<input name="state" placeholder="West Bengal"></label>
+  </div>
+</section>
+
+<section class="card form-card">
+  <div class="section-title">🚌 <span>Transport Fee</span></div>
+  <div class="form-grid two">
+    <label>TRANSPORT FEE AMOUNT <em>(YEARLY TOTAL)</em><input type="number" name="transport_fee" value="0" min="0"></label>
+    <div class="hint">ⓘ Put the yearly transport fee amount. Use 0 if transport is not applicable.</div>
+  </div>
+</section>
+
+<section class="bottom-forms">
+  <section class="card form-card">
+    <div class="section-title">📷 <span>Student Photo</span></div>
+    <div class="photo-upload"><div class="camera">📷</div><label class="upload-btn">⬆ Choose Photo<input type="file" name="photo" accept=".jpg,.jpeg,.png,.webp" hidden></label><small>JPG/PNG/WEBP, max 2MB</small></div>
+  </section>
+  <section class="card form-card">
+    <div class="section-title">📝 <span>Remarks</span></div>
+    <textarea class="remarks" name="remarks" placeholder="Any special notes..."></textarea>
+  </section>
+</section>
+
+<div class="form-actions"><button class="btn primary large" type="submit">♟ Register Student</button><a class="btn light large" href="/students">Cancel</a></div>
+</form>
+<div id="toast" class="toast"></div>
+{% endblock %}
+{% block scripts %}
+<script>
+const editId = "{{ edit_id }}";
+async function loadEdit(){
+  if(!editId){document.querySelector('[name="admission_date"]').value=new Date().toISOString().slice(0,10);return;}
+  const s=await api('/api/students/'+editId);
+  document.querySelectorAll('#admissionForm [name]').forEach(el=>{ if(s[el.name]!==undefined && el.type!=="file") el.value=s[el.name]; });
+  document.getElementById('studentId').value=s.id; document.getElementById('existingPhoto').value=s.photo||"";
+}
+loadEdit();
+document.getElementById('admissionForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const res = await fetch('/api/students',{method:'POST',body:new FormData(e.target)});
+  const d = await res.json();
+  if(!res.ok){showToast(d.error || 'Could not save student','error');return;}
+  showToast('Student saved successfully!');
+  e.target.reset();
+  document.querySelector('[name="admission_date"]').value = new Date().toISOString().slice(0,10);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Admission Enquiry{% endblock %}
+{% block page_title %}Admission Enquiry{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Admission Enquiry</h1><p>Track prospective students and follow-ups</p></div><button class="btn primary" onclick="openModal()">＋ New Enquiry</button></div>
+<section class="card"><div class="table-wrap"><table><thead><tr><th>ENQUIRY NO</th><th>STUDENT</th><th>PARENT</th><th>MOBILE</th><th>CLASS</th><th>STATUS</th><th>FOLLOW UP</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><h2>New Enquiry</h2><button onclick="closeModal()">×</button></div>
+<form id="enquiryForm" class="form-grid two">
+<label>Student Name<input name="student_name" required></label><label>Parent Name<input name="parent_name"></label>
+<label>Mobile<input name="mobile"></label><label>Email<input name="email" type="email"></label>
+<label>Class<select name="class_name"><option>1</option><option>2</option><option>5</option><option>10</option><option>11</option><option>12</option><option>BCA</option><option>B.Tech</option></select></label>
+<label>Source<select name="source"><option>Website</option><option>Walk-in</option><option>Phone</option><option>Reference</option></select></label>
+<label>Status<select name="status"><option>New</option><option>Follow-up</option><option>Converted</option><option>Closed</option></select></label><label>Follow-up Date<input name="follow_up_date" type="date"></label>
+<label class="full">Remarks<textarea name="remarks"></textarea></label><button class="btn primary" type="submit">Save Enquiry</button>
+</form></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function load(){const d=await api('/api/enquiries');document.getElementById('rows').innerHTML=d.length?d.reverse().map(x=>`<tr><td>${esc(x.enquiry_no)}</td><td><b>${esc(x.student_name)}</b></td><td>${esc(x.parent_name)}</td><td>${esc(x.mobile)}</td><td>${esc(x.class_name)}</td><td><span class="badge">${esc(x.status)}</span></td><td>${esc(x.follow_up_date)}</td></tr>`).join(''):'<tr><td colspan="7" class="empty">No enquiries.</td></tr>';}
+function openModal(){document.getElementById('modal').classList.add('show')} function closeModal(){document.getElementById('modal').classList.remove('show')}
+document.getElementById('enquiryForm').addEventListener('submit',async e=>{e.preventDefault();await fetch('/api/enquiries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});closeModal();e.target.reset();load();});load();
+</script>
+{% endblock %}

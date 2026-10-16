@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Attendance{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Attendance</h1><p>Record daily student attendance</p></div><button class="btn primary" onclick="openModal()">＋ Mark Attendance</button></div>
+<section class="card"><div class="toolbar"><input id="filter" class="search" placeholder="Search student, ADM no or class..."></div><div class="table-wrap"><table><thead><tr><th>DATE</th><th>ADM NO</th><th>STUDENT</th><th>CLASS</th><th>STATUS</th><th>REMARKS</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><h2>Mark Attendance</h2><button onclick="closeModal()">×</button></div>
+<form id="attForm" class="form-grid two"><label>Date<input name="date" type="date"></label><label>ADM No<input name="adm_no" required></label><label>Student Name<input name="student_name" required></label><label>Class<input name="class_name"></label><label>Status<select name="status"><option>Present</option><option>Absent</option><option>Late</option><option>Leave</option></select></label><label>Remarks<input name="remarks"></label><button class="btn primary">Save Attendance</button></form></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+let data=[];async function load(){data=await api('/api/attendance');render()}function render(){const q=document.getElementById('filter').value.toLowerCase();const a=data.filter(x=>Object.values(x).join(' ').toLowerCase().includes(q));document.getElementById('rows').innerHTML=a.reverse().map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.adm_no)}</td><td>${esc(x.student_name)}</td><td>${esc(x.class_name)}</td><td><span class="badge ${x.status==='Present'?'success':'warning'}">${esc(x.status)}</span></td><td>${esc(x.remarks)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No attendance records.</td></tr>'}
+function openModal(){document.getElementById('modal').classList.add('show')}function closeModal(){document.getElementById('modal').classList.remove('show')}
+document.getElementById('filter').addEventListener('input',render);document.getElementById('attForm').addEventListener('submit',async e=>{e.preventDefault();await fetch('/api/attendance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});closeModal();e.target.reset();load()});document.querySelector('[name="date"]').value=new Date().toISOString().slice(0,10);load();
+</script>
+{% endblock %}

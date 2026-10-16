@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Fee Collection{% endblock %}
+{% block page_title %}Fee Collection{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Fee Collection</h1><p>Collect and track student fees</p></div><button class="btn primary" onclick="openModal()">＋ Collect Fee</button></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-icon orange">₹</div><div><span>Total Collection</span><strong id="total">₹0</strong></div></div><div class="stat-card"><div class="stat-icon blue">▣</div><div><span>Transactions</span><strong id="count">0</strong></div></div></div>
+<section class="card"><div class="table-wrap"><table><thead><tr><th>RECEIPT</th><th>ADM NO</th><th>STUDENT</th><th>TYPE</th><th>AMOUNT</th><th>MODE</th><th>DATE</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><h2>Collect Fee</h2><button onclick="closeModal()">×</button></div>
+<form id="feeForm" class="form-grid two"><label>ADM NO<input name="adm_no" required></label><label>Student Name<input name="student_name" required></label><label>Fee Type<select name="fee_type"><option>Tuition Fee</option><option>Admission Fee</option><option>Transport Fee</option><option>Exam Fee</option><option>Other</option></select></label><label>Amount<input name="amount" type="number" min="0" required></label><label>Payment Mode<select name="payment_mode"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option></select></label><label>Payment Date<input name="payment_date" type="date"></label><label class="full">Remarks<textarea name="remarks"></textarea></label><button class="btn primary">Save Payment</button></form></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function load(){const d=await api('/api/fees');document.getElementById('count').textContent=d.length;document.getElementById('total').textContent='₹'+d.reduce((a,x)=>a+Number(x.amount||0),0).toLocaleString('en-IN');document.getElementById('rows').innerHTML=d.length?d.reverse().map(x=>`<tr><td>${esc(x.receipt_no)}</td><td>${esc(x.adm_no)}</td><td>${esc(x.student_name)}</td><td>${esc(x.fee_type)}</td><td><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></td><td>${esc(x.payment_mode)}</td><td>${esc(x.payment_date)}</td></tr>`).join(''):'<tr><td colspan="7" class="empty">No payments.</td></tr>'}
+function openModal(){document.getElementById('modal').classList.add('show')}function closeModal(){document.getElementById('modal').classList.remove('show')}
+document.getElementById('feeForm').addEventListener('submit',async e=>{e.preventDefault();await fetch('/api/fees',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});closeModal();e.target.reset();load()});load();
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Data Click Education{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🏫</div>
+      <div><strong> education</strong><span>Management System</span></div>
+    </div>
+    <div class="profile-box">
+      <div class="avatar">S</div>
+      <div><strong>Administrator</strong><span>⭐</span></div>
+    </div>
+
+    <nav>
+      <div class="nav-title">MAIN</div>
+      <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">⌂ <span>Dashboard</span></a>
+
+      <div class="nav-title">STUDENTS</div>
+      <a href="/enquiries" class="nav-item {% if request.path == '/enquiries' %}active{% endif %}">▣ <span>Admission Enquiry</span></a>
+      <a href="/students" class="nav-item {% if request.path == '/students' %}active{% endif %}">♟ <span>All Students</span></a>
+      <a href="/new-admission" class="nav-item {% if request.path == '/new-admission' %}active{% endif %}">♟ <span>New Admission</span></a>
+      <a href="#" class="nav-item">▣ <span>Passed Out Archive</span></a>
+      <a href="#" class="nav-item">🎓 <span>Promotion</span></a>
+      <a href="#" class="nav-item accent">▣ <span>Session Report</span></a>
+
+      <div class="nav-title">FEES</div>
+      <a href="/fees" class="nav-item {% if request.path == '/fees' %}active{% endif %}">☷ <span>Fee Structure</span></a>
+      <a href="/fees" class="nav-item">▣ <span>Fee Collection</span></a>
+      <a href="/fees" class="nav-item green">⚡ <span>Quick Fee Collect</span></a>
+      <a href="#" class="nav-item green">➤ <span>WhatsApp Reminder</span></a>
+      <a href="#" class="nav-item red">♜ <span>Fee Deletion Log</span></a>
+
+      <div class="nav-title">ACADEMICS</div>
+      <a href="/attendance" class="nav-item {% if request.path == '/attendance' %}active{% endif %}">☑ <span>Attendance</span></a>
+      <a href="/attendance" class="nav-item">☷ <span>Attendance Report</span></a>
+      <a href="#" class="nav-item">▣ <span>Exams</span></a>
+      <a href="#" class="nav-item">✎ <span>Marks Entry</span></a>
+      <a href="#" class="nav-item">☷ <span>Class Result</span></a>
+      <a href="#" class="nav-item">▤ <span>Subjects</span></a>
+
+      <div class="nav-title">STAFF / PAYROLL</div>
+      <a href="/staff" class="nav-item {% if request.path == '/staff' %}active{% endif %}">♟ <span>Staff Management</span></a>
+      <a href="/staff" class="nav-item">▣ <span>Salary Management</span></a>
+      <a href="/staff" class="nav-item">▥ <span>Salary Report</span></a>
+
+      <div class="nav-title">ADMIN</div>
+      <a href="/exams" class="nav-item {% if request.path == '/exams' %}active{% endif %}">▣ <span>Exams & Marks</span></a>
+      <a href="/promotion" class="nav-item {% if request.path == '/promotion' %}active{% endif %}">🎓 <span>Promotion</span></a>
+      <a href="/reports" class="nav-item {% if request.path == '/reports' %}active{% endif %}">📊 <span>Reports & Export</span></a>
+      <a href="/settings" class="nav-item {% if request.path == '/settings' %}active{% endif %}">⚙ <span>Admin Settings</span></a>
+      <a href="/settings" class="nav-item">⚙ <span>Settings</span></a>
+      <a href="#" class="nav-item">🔑 <span>Password Change</span></a>
+      <a href="/logout" class="nav-item red">↪ <span>Logout</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="top-title">{% block page_title %}Management System{% endblock %}</div>
+      <div class="top-actions">
+        <span>📅 <b>2027-28</b></span>
+        <span class="theme-dot purple"></span><span class="theme-dot teal"></span><span class="theme-dot blue"></span>
+      </div>
+    </header>
+
+    <section class="content">
+      {% block content %}{% endblock %}
+    </section>
+
+    <footer>
+      <span>☎ 7310095239</span><span>🌐 Website</span><span>▶ YouTube</span><span>f Facebook</span><span>◎ Instagram</span>
+    </footer>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
